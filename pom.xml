@@ -8,7 +8,7 @@
 		<version>0.0.1</version>
 	</parent>
 	<groupId>com.uns.ac.rs</groupId>
-	<artifactId>scheduler-service</artifactId>
+	<artifactId>notification-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>scheduler-service</name>
 	<description>Scheduler microservice</description>
@@ -18,6 +18,15 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-artemis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>LATEST</version>
 		</dependency>
 	</dependencies>
 
