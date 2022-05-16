@@ -9,3 +9,20 @@ spring:
     password: simetraehcapa
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  cloud:
+    config:
+      enabled: false
+
+feign-services:
+  scheduler-service:
+    name: scheduler-service
+    url: http://localhost:8080/api/scheduler-service
+    path: /reservation-event
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 200000
+        readTimeout: 200000
+        loggerLevel: full

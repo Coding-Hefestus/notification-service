@@ -1,56 +1,39 @@
 package com.uns.ac.rs.notificationservice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.uns.ac.rs.notificationservice.config.JmsConfig;
-import common.events.Student;
-import lombok.RequiredArgsConstructor;
+import com.uns.ac.rs.notificationservice.feign.FeignClientSchedulerService;
+import common.events.ReservationEventDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
-import org.springframework.jms.core.JmsTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.Queue;
 
 @Component
 @EnableJms
 public class Listener {
 
-    private JmsTemplate jmsTemplate;
+    private SimpMessageSendingOperations messagingTemplate;
+    private FeignClientSchedulerService feignClientSchedulerService;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-
-
-    @JmsListener(destination = JmsConfig.RESERVATIONS_QUEUE)
-    public void listen(String student) throws JsonProcessingException {
-        Student s = new Gson().fromJson(student, Student.class);
-        System.out.println(s);
+    public Listener(SimpMessageSendingOperations messagingTemplate, FeignClientSchedulerService feignClientSchedulerService){
+        this.messagingTemplate = messagingTemplate;
+        this.feignClientSchedulerService = feignClientSchedulerService;
     }
 
-   /*   public void setConnectionFactory(ConnectionFactory cf) {
-        this.jmsTemplate = new JmsTemplate(cf);
+    @JmsListener(destination = JmsConfig.PAYMENT_QUEUE)
+    public void listen(String paymentId) throws JsonProcessingException {
+
+
+        //TODO - use 'payment' and fetch data from where ever it is supposed to be fetched to be able to construct ReservationEventDto
+        ReservationEventDto eventDto = feignClientSchedulerService.fetchReservationEvent(Integer.parseInt(paymentId));
+
+
+        messagingTemplate.convertAndSend("/scheduler/reservation-event", eventDto);
+
+        //TODO - send emails to admins
     }
 
-    public void setQueue(Queue queue) {
-        this.queue = queue;
-    }
-
-
-  @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        //factory.setConnectionFactory(connectionFactory());
-        //factory.setDestinationResolver(destinationResolver());
-        factory.setSessionTransacted(true);
-        factory.setConcurrency("3-10");
-        return factory;
-    }*/
 }
