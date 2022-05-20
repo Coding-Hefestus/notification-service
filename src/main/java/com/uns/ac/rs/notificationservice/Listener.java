@@ -26,6 +26,7 @@ public class Listener {
     @JmsListener(destination = JmsConfig.PAYMENT_QUEUE)
     public void listen(String paymentId) throws JsonProcessingException {
 
+        System.out.println("pay: " +paymentId);
 
         //TODO - use 'payment' and fetch data from where ever it is supposed to be fetched to be able to construct ReservationEventDto
         ReservationEventDto eventDto = feignClientSchedulerService.fetchReservationEvent(Integer.parseInt(paymentId));
